@@ -1,0 +1,83 @@
+start-all.sh start
+
+jps
+
+hive
+
+show databases;
+
+create database sample;
+
+use sample;
+
+#creating internal table
+
+create table day1(name string, rollno int,dept string)
+
+row format delimited
+fields terminated by  ',';
+
+load data local inpath '/home/inndata/Desktop/hivedemo' into table day1;
+
+select* from day1;
+
+load data local inpath '/home/inndata/Desktop/hivedemo1' into table day1;
+
+select* from day1;
+
+#to get metadata 
+describe day1;
+
+describe extended day1;
+
+#open another terminal
+
+hdfs dfs-mkdir /hivedata
+
+hdfs dfs -put /home/inndata/Desktop/hivedemo* /hivedata
+
+#go back to the previous terminal
+
+create table day2(name string, rollno int,dept string)
+
+row format delimited
+
+fields terminated by  ',';
+
+load data inpath '/hivedata/hivedemo' into table day2;
+
+select* from day2;
+
+#creating external table
+
+create external table day3(name string, rollno int,dept string)
+
+row format delimited
+
+fields terminated by  ','
+
+location '/hivedata';
+
+select* from day3;
+
+#open another terminal to load data into hivedata directory
+
+hdfs dfs -put /home/inndata/Desktop/hivedemo /hivedata
+
+#go back to the previous terminal
+
+select* from day3;
+
+#to delete tables
+
+drop table day1
+
+#to delete the created database
+
+drop database sample
+
+
+
+
+
+
