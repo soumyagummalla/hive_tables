@@ -1,0 +1,48 @@
+
+#bucketing 
+
+create table bucktable1(sno int,name string,dept string,year int)
+
+row format delimited
+
+fields terminated by  ',';
+
+load data local inpath '/home/inndata/Desktop/bucktable' into table bucktable1 ;
+
+select* from bucktable1
+
+
+set hive.enforce.bucketing=true;
+
+set hive.exec,dynamic.partition.mode=nonstrict;
+
+#createing the table and performing partitioning and bucketing togather, clustered specifies the bucketing and no of buckets should be 2^n 
+
+create table bucket(col1 int,col2 string, col3 string) partitioned by(year int) clustered by(col3) into 4 buckets stored as textfile location '/user/hive/warehouse/sample.db/bucket'
+insert into table bucket 
+partition(year) select sno,name,dept,year from bucktable1;
+
+#no of reduce tasks will be equal to the no of buckets provided.
+
+show partitions bucket;
+
+#to see partitions in hdfs, open another terminal
+
+hdfs dfs -ls /user/hive/warehouse/sample.db/bucket
+
+#to see buckets in each partition
+
+hdfs dfs -ls /user/hive/warehouse/sample.db/bucket=2012
+
+
+
+
+
+
+
+
+
+
+
+
+
